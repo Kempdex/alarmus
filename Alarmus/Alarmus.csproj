@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{AD1A7D2B-C882-4405-BA3A-6DC396539602}</ProjectGuid>
+    <ProjectGuid>{5A26F246-EF56-4191-BB9D-43ECCFC98B71}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>AlarmusClient</RootNamespace>
-    <AssemblyName>AlarmusClient</AssemblyName>
+    <RootNamespace>Alarmus</RootNamespace>
+    <AssemblyName>Alarmus</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -54,43 +54,35 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AsyncClient.cs" />
-    <Compile Include="ClientObject.cs" />
-    <Compile Include="View\AutorizationPage.xaml.cs">
-      <DependentUpon>AutorizationPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\MainMenuPage.xaml.cs">
-      <DependentUpon>MainMenuPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\RequestPage.xaml.cs">
-      <DependentUpon>RequestPage.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Crypto.cs" />
+    <Compile Include="FileReader.cs" />
+    <Compile Include="Log.cs" />
+    <Compile Include="Messages\AutorizationMessage.cs" />
+    <Compile Include="Messages\Message.cs" />
+    <Compile Include="Messages\MessageType.cs" />
+    <Compile Include="Messages\RequestMessage.cs" />
+    <Compile Include="Serializer.cs" />
+    <Compile Include="ServerResponse.cs" />
+    <Compile Include="Specialist.cs" />
+    <Compile Include="StateObject.cs" />
+    <Compile Include="Urgency.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="Admin.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Client.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\AutorizationPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MainMenuPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\RequestPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NetworkKey.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -115,15 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Alarmus\Alarmus.csproj">
-      <Project>{5a26f246-ef56-4191-bb9d-43eccfc98b71}</Project>
-      <Name>Alarmus</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

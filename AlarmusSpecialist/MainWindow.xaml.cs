@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace AlarmusClient
+namespace AlarmusSpecialist
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,13 +23,6 @@ namespace AlarmusClient
         public MainWindow()
         {
             InitializeComponent();
-
-            mainFrame.Source = new Uri("View/AutorizationPage.xaml", UriKind.Relative);
-        }
-
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            AsyncClient.Disconnect();
         }
     }
 }

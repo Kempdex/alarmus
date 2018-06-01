@@ -1,0 +1,21 @@
+﻿<Page x:Class="AlarmusClient.View.RequestPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:AlarmusClient.View"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="600"
+      Title="RequestPage">
+
+    <StackPanel>
+        <TextBlock Text="Запрос на техническое обслуживание" FontSize="20" Margin="10" HorizontalAlignment="Center" Width="400" Height="25" VerticalAlignment="Top"/>
+        <TextBlock Text="Тип проблемы: " Width="400" Margin="5, 0, 5, 5" FontSize="14"/>
+        <ComboBox x:Name="troubleTypeBox" Width="400" Height="25"/>
+        <TextBlock Text="Описание проблемы: " Width="400" Margin="5" FontSize="14"/>
+        <TextBox x:Name="troubleDataBox" TextWrapping="Wrap" Width="400" Height="150" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10, 0, 10, 10"/>
+
+        <Button x:Name="sendRequestBtn" Content="Отправить" Width="150" Height="30" FontSize="14" Click="sendRequestBtn_Click"/>
+
+    </StackPanel>
+</Page>

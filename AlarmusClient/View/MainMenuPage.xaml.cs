@@ -13,23 +13,29 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace AlarmusClient
+namespace AlarmusClient.View
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainMenuPage.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainMenuPage : Page
     {
-        public MainWindow()
+        public MainMenuPage()
         {
             InitializeComponent();
-
-            mainFrame.Source = new Uri("View/AutorizationPage.xaml", UriKind.Relative);
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void requestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            RequestPage view = new RequestPage();
+            NavigationService.Navigate(view);
+        }
+
+        private void exitBtn_Click(object sender, RoutedEventArgs e)
         {
             AsyncClient.Disconnect();
+            AutorizationPage view = new AutorizationPage();
+            NavigationService.Navigate(view);
         }
     }
 }
