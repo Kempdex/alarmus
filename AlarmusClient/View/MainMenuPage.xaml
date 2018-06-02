@@ -15,6 +15,7 @@
         </Grid.ColumnDefinitions>
 
         <Button x:Name="requestBtn" Grid.Column="0" Content="Техническая поддержка" Width="250" Height="50" Click="requestBtn_Click" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <Button x:Name="settingsBtn" Grid.Column="0" Content="Настройки" Width="250" Height="50" Click="settingsBtn_Click" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
         <Button x:Name="exitBtn" Grid.Column="1" Content="Выход" Width="150" Height="50" Click="exitBtn_Click" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
         
     </Grid>

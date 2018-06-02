@@ -59,7 +59,7 @@ namespace AlarmusServer
             {
                 Log.Info("Запуск сервера...");
                 listener.Listen(maxClientSize);
-                Log.Info("Сервер запущен. Максимальное количество подключений:", maxClientSize.ToString());
+                Log.Info("Сервер запущен. Максимальное количество подключений: ", maxClientSize.ToString());
 
                 while (true)
                 {
@@ -67,7 +67,8 @@ namespace AlarmusServer
                     allDone.Reset();
 
                     listener.BeginAccept(new AsyncCallback(AcceptCallback), listener);
-                    
+                    //Thread listenerThread = new Thread(() => listener.BeginAccept(new AsyncCallback(AcceptCallback), listener));
+                    //listenerThread.Start();
 
                     allDone.WaitOne();
                 }

@@ -54,10 +54,10 @@ namespace AlarmusServer
             connection.Open();
 
             string passwordCommand = "SELECT * FROM Users WHERE login = '" + msg.getUserLogin() + "' AND password = '" + msg.getUserPassword() + "'";
-            Alarmus.Log.Info(passwordCommand);
 
             SQLiteCommand command = new SQLiteCommand(passwordCommand, connection);
             SQLiteDataReader reader = command.ExecuteReader();
+
             if(reader.HasRows)
             {
                 connection.Close();

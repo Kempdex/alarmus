@@ -60,17 +60,19 @@ namespace AlarmusClient
                     return;
                 }*/
 
+                Log.Debug("First. Is client connected? - ", client.Connected);
+
                 /*
                  * Поставил таймауты на пару секунд, вместо половины секунды
                  * 
                  * */
-
                 Send(client, msg);
-                sendDone.WaitOne(20000); //Таймаут на две секунды
+                sendDone.WaitOne(2000); //Таймаут на две секунды
 
                 Receive(client);
-                receiveDone.WaitOne(20000); //Таймаут на две секунды
+                receiveDone.WaitOne(2000); //Таймаут на две секунды
 
+                Log.Debug("Second. Is client connected? - ", client.Connected);
             }
             catch(Exception e)
             {
@@ -218,8 +220,6 @@ namespace AlarmusClient
 
                 // MessageBox.Show("Sent " + bytesSent + "bytes to server.");
 
-                
-
                 sendDone.Set();
             }
             catch(Exception e)
@@ -235,10 +235,12 @@ namespace AlarmusClient
         {
             if(client == null)
             {
+                Log.Debug("Client is null");
                 return;
             }
             if(!client.Connected)
             {
+                Log.Debug("Client isn't connected");
                 return;
             }
 

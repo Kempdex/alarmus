@@ -20,10 +20,15 @@ namespace AlarmusClient.View
     /// </summary>
     public partial class RequestPage : Page
     {
-        public RequestPage()
+        private MainMenuPage parent;
+
+        public RequestPage(MainMenuPage parent)
         {
             InitializeComponent();
 
+            this.parent = parent;
+
+            //Just for test
             troubleTypeBox.Items.Add("Test1");
             troubleTypeBox.Items.Add("Test2");
             troubleTypeBox.Items.Add("Test3");
@@ -34,9 +39,13 @@ namespace AlarmusClient.View
         {
             Alarmus.RequestMessage request = new Alarmus.RequestMessage(troubleDataBox.Text, troubleTypeBox.SelectedItem.ToString());
             AsyncClient.Connect("192.168.1.46", 8888);
-          //  MessageBox.Show(AsyncClient.isConnected.ToString());
             AsyncClient.SendMessage(request);
            
+        }
+
+        private void backToMainMenuBtn_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(parent);
         }
     }
 }

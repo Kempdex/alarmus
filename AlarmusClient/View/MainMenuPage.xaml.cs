@@ -27,7 +27,7 @@ namespace AlarmusClient.View
 
         private void requestBtn_Click(object sender, RoutedEventArgs e)
         {
-            RequestPage view = new RequestPage();
+            RequestPage view = new RequestPage(this);
             NavigationService.Navigate(view);
         }
 
@@ -35,6 +35,12 @@ namespace AlarmusClient.View
         {
             AsyncClient.Disconnect();
             AutorizationPage view = new AutorizationPage();
+            NavigationService.Navigate(view);
+        }
+
+        private void settingsBtn_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsPage view = new SettingsPage(this);
             NavigationService.Navigate(view);
         }
     }
