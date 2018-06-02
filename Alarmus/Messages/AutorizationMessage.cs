@@ -16,28 +16,30 @@ namespace Alarmus
         /// <summary>
         /// 
         /// </summary>
-        private string userLogin;
+        public string userLogin { get; }
         /// <summary>
         /// 
         /// </summary>
-        private string userPassword;
+        public string userPassword { get; }
+        /// <summary>
+        /// Тип клиента, запрашивающего авторизацию
+        /// </summary>
+        public ClientType clientType { get; }
 
-
-        public AutorizationMessage(string login, string password)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clientType"></param>
+        /// <param name="login"></param>
+        /// <param name="password"></param>
+        public AutorizationMessage(ClientType clientType, string login, string password)
         {
-            this.type = MessageType.MSG_AUTORIZATION;
+            type = MessageType.MSG_AUTORIZATION;
+            this.clientType = clientType;
             userLogin = login;
             userPassword = password;
         }
 
-        public string getUserLogin()
-        {
-            return this.userLogin;
-        }
 
-        public string getUserPassword()
-        {
-            return this.userPassword;
-        }
     }
 }

@@ -18,7 +18,7 @@ namespace AlarmusServer
         private static Socket listener;
         private static Int32 port;
         private static Int32 maxClientSize;
-        private List<StateObject> clients;
+        private static List<Client> Clients = new List<Client>();
 
         public static void InitializeServer(Int32 _port, Int32 _maxClientSize)
         {
@@ -96,11 +96,12 @@ namespace AlarmusServer
                 Socket listener = (Socket)ar.AsyncState;
                 Socket handler = listener.EndAccept(ar);
 
-                StateObject state = new StateObject();
-                state.workSocket = handler;
-                //Log.Info("Пользователь подключился. Адрес пользователя: ", state.workSocket.LocalEndPoint.ToString());
+                Client client = new Client(handler);
 
-                handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
+                Log.Info("Пользователь подключился. Адрес пользователя: ", client.socket.LocalEndPoint.ToString());
+                Clients.Add(client);
+
+                handler.BeginReceive(client.buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
             }
             catch(Exception e)
             {
@@ -119,21 +120,20 @@ namespace AlarmusServer
             {
                 Message msg;
 
-                StateObject state = (StateObject)ar.AsyncState;
-                Socket handler = state.workSocket;
+                Client client = (Client)ar.AsyncState;
 
-                Int32 bytesRead = handler.EndReceive(ar);
+                Int32 bytesRead = client.socket.EndReceive(ar);
 
                 if (bytesRead > 0)
                 {
-                    msg = (Message)Serializer.Deserialize(state.buffer);
+                    msg = (Message)Serializer.Deserialize(client.buffer);
 
-                    ParseMessage(msg, handler);
+                    ParseMessage(msg, client);
                 }
             }
             catch(Exception e)
             {
-                MessageBox.Show(e.ToString());
+                //MessageBox.Show(e.ToString());
                 Log.Error("Ошибка приема данных. Подробная информация: ", e.ToString());
             }
         }
@@ -143,30 +143,15 @@ namespace AlarmusServer
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="handler"></param>
-        public static void ParseMessage(Message msg, Socket handler)
+        public static void ParseMessage(Message msg, Client client)
         {
             switch(msg.getMessageType())
             {
                 case MessageType.MSG_AUTORIZATION:
-                    
-                    AutorizationMessage autorization = (AutorizationMessage)msg;
-                    if (DatabaseMaster.HasPassword(autorization))
-                    {
-                        Send(handler, ServerResponse.SR_AUTORIZATION_SUCCESS);
-                        Log.Info("Пользователь авторизирован. Логин: ", autorization.getUserLogin());
-                    }
-                    else
-                    {
-                        Send(handler, ServerResponse.SR_AUTORIZATION_FAILED);
-                        Log.Info("Неудачная попытка авторизации пользователя.");
-                    }
-                    
+                    Autorize(msg, client);
                     break;
                 case MessageType.MSG_REQUEST:
-                    Log.Info("Запрос технической поддержки от пользователя.");
-                    Send(handler, ServerResponse.SR_REQUEST_SUCCESS);
-                    RequestMessage request = (RequestMessage)msg;
-                    Log.Info("Описание проблемы: ", request.getTroubleData(), "Тип проблемы: ", request.getTroubleType());
+                    ProcessAnRequest(client, msg);
                     break;
             }
         }
@@ -174,15 +159,49 @@ namespace AlarmusServer
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="client"></param>
+        public static void Autorize(Message msg, Client client)
+        {
+            AutorizationMessage message = (AutorizationMessage)msg;
+
+            if(DatabaseMaster.HasPassword(message))
+            {
+                Send(client, ServerResponse.SR_AUTORIZATION_SUCCESS);
+                Log.Info("Авторизация пользователя. Логин - ", message.userLogin);
+            }
+            else
+            {
+                Send(client, ServerResponse.SR_AUTORIZATION_FAILED);
+                Log.Info("Неудачная авторизация пользователя. Запрашиваемый логин - ", message.userPassword);
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="msg"></param>
+        public static void ProcessAnRequest(Client client, Message msg)
+        {
+            RequestMessage request = (RequestMessage)msg;
+            Send(client, ServerResponse.SR_REQUEST_SUCCESS);
+            Log.Info("Запрос технической поддержки от пользователя.");
+            Log.Info("Описание проблемы: ", request.troubleData, "Тип проблемы: ", request.typeOfTrouble);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="handler"></param>
         /// <param name="response"></param>
-        public static void Send(Socket handler, ServerResponse response)
+        public static void Send(Client client, ServerResponse response)
         {
             try
             {
                 byte[] data = Serializer.Serialize(response);
 
-                handler.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), handler);
+                client.socket.BeginSend(data, 0, data.Length, 0, new AsyncCallback(SendCallback), client);
             }
             catch(Exception e)
             {
@@ -198,17 +217,31 @@ namespace AlarmusServer
         {
             try
             {
-                Socket handler = (Socket)ar.AsyncState;
+                Client client = (Client)ar.AsyncState;
 
-                Int32 bytesSend = handler.EndSend(ar);
+                Int32 bytesSend = client.socket.EndSend(ar);
 
-                handler.Shutdown(SocketShutdown.Both);
-                handler.Close();
+                client.socket.BeginReceive(client.buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReadCallback), client);
+                //handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReadCallback), state);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Log.Error("Ошибка отправки ответа клиенту. Подробная информация: ", e.ToString());
             }
+        }
+
+        /// <summary>
+        /// Отключаем всех клиентов, завершая работу сервера
+        /// </summary>
+        public static void Terminate()
+        {
+            Clients.ForEach(client => {
+                if (client.socket != null)
+                {
+                    client.socket.Shutdown(SocketShutdown.Both);
+                    client.socket.Close();
+                }
+            });
         }
     }
 }

@@ -54,14 +54,6 @@ namespace AlarmusClient
         {
             try
             {
-                /*if(!isConnected)
-                {
-                    Log.Error("Отправка сообщения не удалась из-за отсутствия подключения к серверу", "Тип сообщения: ", msg.getMessageType());
-                    return;
-                }*/
-
-                Log.Debug("First. Is client connected? - ", client.Connected);
-
                 /*
                  * Поставил таймауты на пару секунд, вместо половины секунды
                  * 
@@ -71,8 +63,6 @@ namespace AlarmusClient
 
                 Receive(client);
                 receiveDone.WaitOne(2000); //Таймаут на две секунды
-
-                Log.Debug("Second. Is client connected? - ", client.Connected);
             }
             catch(Exception e)
             {
@@ -147,15 +137,14 @@ namespace AlarmusClient
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="client"></param>
-        private static void Receive(Socket client)
+        /// <param name="handler"></param>
+        private static void Receive(Socket handler)
         {
             try
             {
-                StateObject state = new StateObject();
-                state.workSocket = client;
+                Client client = new Client(handler);
 
-                client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback), state);
+                client.socket.BeginReceive(client.buffer, 0, Client.BufferSize, 0, new AsyncCallback(ReceiveCallback), client);
             }
             catch(Exception e)
             {
@@ -172,20 +161,12 @@ namespace AlarmusClient
         {
             try
             {
-                StateObject state = (StateObject)ar.AsyncState;
-                Socket client = state.workSocket;
+                Client client = (Client)ar.AsyncState;
 
-                int bytesRead = client.EndReceive(ar);
+                int bytesRead = client.socket.EndReceive(ar);
 
-                if(bytesRead > 0)
-                {
-                    client.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ReceiveCallback), state);
-                }
-                else
-                {
-                    serverResponse = (ServerResponse)Serializer.Deserialize(state.buffer);
-                    receiveDone.Set();
-                }
+                serverResponse = (ServerResponse)Serializer.Deserialize(client.buffer);
+                receiveDone.Set();
             }
             catch(Exception e)
             {
@@ -218,8 +199,6 @@ namespace AlarmusClient
 
                 int bytesSent = client.EndSend(ar);
 
-                // MessageBox.Show("Sent " + bytesSent + "bytes to server.");
-
                 sendDone.Set();
             }
             catch(Exception e)
@@ -235,12 +214,12 @@ namespace AlarmusClient
         {
             if(client == null)
             {
-                Log.Debug("Client is null");
+                Log.Debug("Клиент == null");
                 return;
             }
             if(!client.Connected)
             {
-                Log.Debug("Client isn't connected");
+                Log.Debug("Клиент не был подключен.");
                 return;
             }
 

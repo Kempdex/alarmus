@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -33,14 +34,36 @@ namespace AlarmusClient.View
             troubleTypeBox.Items.Add("Test2");
             troubleTypeBox.Items.Add("Test3");
             troubleTypeBox.Items.Add("Test4");
+            troubleTypeBox.SelectedIndex = 0;
         }
 
         private void sendRequestBtn_Click(object sender, RoutedEventArgs e)
         {
             Alarmus.RequestMessage request = new Alarmus.RequestMessage(troubleDataBox.Text, troubleTypeBox.SelectedItem.ToString());
-            AsyncClient.Connect("192.168.1.46", 8888);
             AsyncClient.SendMessage(request);
-           
+            sendRequestBtn.IsEnabled = false;
+            /*
+             * Самый простой способ подождать сеть.
+             * Ждем, пока асинхронный клиент получит ответ от сервера
+             */
+            Thread.Sleep(500);
+
+            //Проверяем ответ от сервера
+            switch(AsyncClient.GetServerResponse())
+            {
+                case Alarmus.ServerResponse.SR_REQUEST_SUCCESS:
+                    MessageBox.Show("Заявка успешно отправлена");
+                    break;
+                case Alarmus.ServerResponse.SR_REQUEST_FAILED:
+                    MessageBox.Show("Заявка не была отправлена. Попробуйте позже");
+                    break;
+                case Alarmus.ServerResponse.SR_NULL:
+                    MessageBox.Show("Заявка не была отправлена. Возможны неполадки с сетью");
+                    Alarmus.Log.Warning("Ответ на заявку не успел дойти. Возможны неполадки с сетью или сервер был отсоединен");
+                    break;
+            }
+
+            sendRequestBtn.IsEnabled = true;
         }
 
         private void backToMainMenuBtn_Click(object sender, RoutedEventArgs e)

@@ -33,8 +33,10 @@ namespace Alarmus
         /// <param name="data">Массив объектов</param>
         public static void Debug(params object[] data)
         {
+#if DEBUG
             LinkedComponents.ForEach(x => x(data));
             WriteMessageToFile(" [DEBUG] ", data);
+#endif
         }
 
         /// <summary>
@@ -74,12 +76,18 @@ namespace Alarmus
         /// <param name="data"></param>
         private static void WriteMessageToFile(string header, params object[] data)
         {
-            System.IO.File.AppendAllText(logFile, DateTime.Now.ToLongTimeString() + header);
-            for (Int32 i = 0; i < data.Length; i++)
+            try
             {
-                System.IO.File.AppendAllText(logFile, data[i].ToString() + " ");
+                System.IO.File.AppendAllText(logFile, DateTime.Now.ToLongTimeString() + header);
+                for (Int32 i = 0; i < data.Length; i++)
+                {
+                    System.IO.File.AppendAllText(logFile, data[i].ToString() + " ");
+                }
+                System.IO.File.AppendAllText(logFile, Environment.NewLine);
             }
-            System.IO.File.AppendAllText(logFile, Environment.NewLine);
+            catch (System.IO.IOException e) {
+                Error("Невозможно получить доступ к фалу лога, так как файл был занят другим процессом");
+            }
         }
 
         

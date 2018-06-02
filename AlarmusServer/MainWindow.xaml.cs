@@ -34,7 +34,7 @@ namespace AlarmusServer
            // DatabaseMaster.AddRequest(msg);
 
             List<Alarmus.RequestMessage> list = DatabaseMaster.GetAllRequests();
-            list.ForEach(x => Alarmus.Log.Debug(x.getTroubleType(), x.getTroubleData()));
+            list.ForEach(x => Alarmus.Log.Debug(x.troubleData, x.typeOfTrouble));
 
             portBox.Text = "8888";
             countOfConnectionsBox.Text = "1000";

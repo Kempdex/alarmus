@@ -53,7 +53,7 @@ namespace AlarmusServer
         {
             connection.Open();
 
-            string passwordCommand = "SELECT * FROM Users WHERE login = '" + msg.getUserLogin() + "' AND password = '" + msg.getUserPassword() + "'";
+            string passwordCommand = "SELECT * FROM Users WHERE login = '" + msg.userLogin + "' AND password = '" + msg.userPassword + "'";
 
             SQLiteCommand command = new SQLiteCommand(passwordCommand, connection);
             SQLiteDataReader reader = command.ExecuteReader();
@@ -76,7 +76,7 @@ namespace AlarmusServer
         {
             connection.Open();
 
-            string addCommand = "INSERT INTO Request (troubleData, troubleType) VALUES ('" + request.getTroubleData() + "', '" + request.getTroubleType() + "')";
+            string addCommand = "INSERT INTO Request (troubleData, troubleType) VALUES ('" + request.troubleData + "', '" + request.typeOfTrouble + "')";
 
             SQLiteCommand command = new SQLiteCommand(addCommand, connection);
             command.ExecuteNonQuery();

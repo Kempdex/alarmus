@@ -22,7 +22,7 @@ namespace AlarmusClient.View
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             loginBtn.IsEnabled = false;
-            Alarmus.AutorizationMessage msg = new Alarmus.AutorizationMessage(loginBox.Text, passwordBox.Password);
+            Alarmus.AutorizationMessage msg = new Alarmus.AutorizationMessage(Alarmus.ClientType.CLIENT_USER, loginBox.Text, passwordBox.Password);
             
             AsyncClient.Connect(addressBox.Text, 8888); //TODO: Заменить адрес из текст бокса на параметр
             clientThread = new Thread(() => AsyncAutorization(msg));
